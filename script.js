@@ -1,23 +1,40 @@
-const otpInputs = document.querySelectorAll('.code');
-const submitBtn = document.getElementById('submit-btn');
+const codes = document.querySelectorAll('.code');
 
-otpInputs.forEach((input, index) => {
-    input.addEventListener('input', () => {
-        // Move to the next input when a digit is entered
-        if (input.value.length === 1 && index < otpInputs.length - 1) {
-            otpInputs[index + 1].focus();
-        }
-    });
+        // Focus the first input initially for better UX
+        codes[0].focus();
 
-    input.addEventListener('keydown', (event) => {
-        // Move to the previous input when backspace is pressed
-        if (event.key === 'Backspace' && index > 0 && input.value.length === 0) {
-            otpInputs[index - 1].focus();
-        }
-    });
-});
-
-submitBtn.addEventListener('click', () => {
-    const otp = Array.from(otpInputs).map(input => input.value).join('');
-    alert(`OTP Submitted: ${otp}`);
-});
+        codes.forEach((code, idx) => {
+            
+            // Event Listener 1: Handle Typing (Forward Movement)
+            code.addEventListener('keydown', (e) => {
+                
+                // Allow only numbers (0-9) and Backspace
+                if(e.key >= 0 && e.key <=9) {
+                    // Clear the field before entering new number 
+                    // (ensures only 1 digit remains if user types fast or overwrites)
+                    codes[idx].value = ''; 
+                    
+                    // Allow the default action (typing the number) to happen, 
+                    // then move focus slightly after
+                    setTimeout(() => {
+                        if(codes[idx+1]) {
+                            codes[idx+1].focus();
+                        }
+                    }, 10);
+                } 
+                
+                // Event Listener 2: Handle Backspace (Backward Movement)
+                else if(e.key === 'Backspace') {
+                    
+                    // Make sure we empty the current field immediately
+                    setTimeout(() => {
+                        codes[idx].value = '';
+                        
+                        // If we have a previous field, focus it
+                        if(codes[idx-1]) {
+                            codes[idx-1].focus();
+                        }
+                    }, 10);
+                }
+            });
+        });
